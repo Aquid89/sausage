@@ -1,2 +1,23 @@
+# Node.js / Angular
+node_modules/
+dist/
+.tmp/
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# IDE
 .idea/
+*.iml
+*.ipr
+*.iws
 .vscode/
+
+# OS
+.DS_Store
+Thumbs.db
