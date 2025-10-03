@@ -1,40 +1,40 @@
 pipeline {
-    agent any // Выбираем Jenkins агента, на котором будет происходить сборка: нам нужен любой
+    agent any
 
     triggers {
-        pollSCM('H/5 * * * *') // Запускать будем автоматически по крону примерно раз в 5 минут
+        pollSCM('H/50 * * * *') // Проверка репозитория каждые ~50 минут
     }
 
     tools {
-        maven 'maven-3.8.7' // Для сборки бэкенда нужен Maven
-        jdk 'jdk16' // И Java Developer Kit нужной версии
-        nodejs 'node-15' // А NodeJS нужен для фронта
+        maven 'maven-3.8.7'  // Maven
+        jdk 'jdk16'          // JDK
+        nodejs 'node-15'     // NodeJS
     }
 
     stages {
         stage('Build & Test backend') {
             steps {
                 dir("backend") { // Переходим в папку backend
-                    sh 'mvn package' // Собираем мавеном бэкенд
+                    sh 'mvn -f pom.xml package' // Собираем Maven проект, явно указывая pom.xml
                 }
             }
 
             post {
                 success {
-                    junit 'backend/target/surefire-reports/**/*.xml' // Передадим результаты тестов в Jenkins
+                    junit 'backend/target/surefire-reports/**/*.xml' // Результаты тестов
                 }
             }
         }
 
         stage('Build frontend') {
             steps {
-                dir("frontend") {
-                    sh 'npm install' // Для фронта сначала загрузим все сторонние зависимости
-                    sh 'npm run build' // Запустим сборку
+                dir("frontend") { // Переходим в папку frontend
+                    sh 'npm install'   // Установка зависимостей
+                    sh 'npm run build' // Сборка фронтенда
                 }
             }
         }
-        
+
         stage('Save artifacts') {
             steps {
                 archiveArtifacts(artifacts: 'backend/target/sausage-store-0.0.1-SNAPSHOT.jar')
@@ -42,4 +42,4 @@ pipeline {
             }
         }
     }
-} 
+}
