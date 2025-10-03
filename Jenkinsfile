@@ -11,18 +11,13 @@ pipeline {
         nodejs 'node-15'     // NodeJS
     }  
 
-    stages {
-          stage('Build & Test backend') {
+    stage('Build & Test backend') {
     steps {
-        sh 'mvn -f /home/sergey/.jenkins/workspace/Test11_main@script/backend/pom.xml package'
-    }
-
-    post {
-        success {
-            junit '/home/sergey/.jenkins/workspace/Test11_main@script/backend/target/surefire-reports/**/*.xml'
+        dir('backend') {       // переходим в папку backend
+            sh 'mvn package'   // Maven автоматически найдет pom.xml
         }
     }
-}
+    }    
 
 
         stage('Build frontend') {
