@@ -1,40 +1,45 @@
 pipeline {
-    agent any
+    agent any // Выбираем Jenkins агента, на котором будет происходить сборка: нам нужен любой
+
+    triggers {
+        pollSCM('H/50 * * * *') // Запускать будем автоматически по крону примерно раз в 5 минут
+    }
 
     tools {
-        maven 'maven-3.8.7'
-        jdk 'jdk16'
-        nodejs 'node-15'
+        maven 'maven-3.8.7' // Для сборки бэкенда нужен Maven
+        jdk 'jdk16' // И Java Developer Kit нужной версии
+        nodejs 'node-15' // А NodeJS нужен для фронта
     }
 
     stages {
-        // stage('Build & Test backend') {
-        //     steps {
-        //         dir("backend") { // папка backend из репозитория
-        //             sh 'mvn package' // Maven сам найдёт pom.xml здесь
-        //         }
-        //     }
-        //     post {
-        //         success {
-        //             junit 'backend/target/surefire-reports/**/*.xml'
-        //         }
-        //     }
-        // }
-
-        stage('Build frontend') {
+        stage('Build & Test backend') {
             steps {
-                dir("frontend") {
-                    sh 'npm install'
-                    sh 'npm run build'
+                dir("backend") { // Переходим в папку backend
+                    sh 'mvn package' // Собираем мавеном бэкенд
+                }
+            }
+
+            post {
+                success {
+                    junit 'backend/target/surefire-reports/**/*.xml' // Передадим результаты тестов в Jenkins
                 }
             }
         }
 
+        stage('Build frontend') {
+            steps {
+                dir("frontend") {
+                    sh 'npm install' // Для фронта сначала загрузим все сторонние зависимости
+                    sh 'npm run build' // Запустим сборку
+                }
+            }
+        }
+        
         stage('Save artifacts') {
             steps {
-               // archiveArtifacts artifacts: 'backend/target/*.jar'
-                archiveArtifacts artifacts: 'frontend/dist/**/*'
+                archiveArtifacts(artifacts: 'backend/target/sausage-store-0.0.1-SNAPSHOT.jar')
+                archiveArtifacts(artifacts: 'frontend/dist/frontend/*')
             }
         }
     }
-}
+} 
