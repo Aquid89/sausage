@@ -1,45 +1,44 @@
 pipeline {
-    agent any // Выбираем Jenkins агента, на котором будет происходить сборка: нам нужен любой
+    agent any
 
     triggers {
-        pollSCM('H/5 * * * *') // Запускать будем автоматически по крону примерно раз в 5 минут
+        pollSCM('H/5 * * * *') // проверка репозитория каждые ~5 минут
     }
 
     tools {
-        maven 'maven-3.8.7' // Для сборки бэкенда нужен Maven
-        jdk 'jdk16' // И Java Developer Kit нужной версии
-        nodejs 'node-15' // А NodeJS нужен для фронта
+        maven 'maven-3.8.7'
+        jdk 'jdk16'
+        nodejs 'node-15'
     }
 
     stages {
         stage('Build & Test backend') {
             steps {
-                dir("backend") { // Переходим в папку backend
-                    sh 'mvn package' // Собираем мавеном бэкенд
-                }
+                // Запуск Maven с указанием полного пути к pom.xml
+                sh 'mvn -f $WORKSPACE@script/backend/pom.xml package'
             }
-
             post {
                 success {
-                    junit 'backend/target/surefire-reports/**/*.xml' // Передадим результаты тестов в Jenkins
+                    // Сбор результатов тестов
+                    junit '$WORKSPACE@script/backend/target/surefire-reports/**/*.xml'
                 }
             }
         }
 
         stage('Build frontend') {
             steps {
-                dir("frontend") {
-                    sh 'npm install' // Для фронта сначала загрузим все сторонние зависимости
-                    sh 'npm run build' // Запустим сборку
+                dir("$WORKSPACE@script/frontend") {
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
             }
         }
-        
+
         stage('Save artifacts') {
             steps {
-                archiveArtifacts(artifacts: 'backend/target/sausage-store-0.0.1-SNAPSHOT.jar')
-                archiveArtifacts(artifacts: 'frontend/dist/frontend/*')
+                archiveArtifacts artifacts: '$WORKSPACE@script/backend/target/*.jar'
+                archiveArtifacts artifacts: '$WORKSPACE@script/frontend/dist/**/*'
             }
         }
     }
-} 
+}
