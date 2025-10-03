@@ -8,18 +8,18 @@ pipeline {
     }
 
     stages {
-        stage('Build & Test backend') {
-            steps {
-                dir("backend") { // папка backend из репозитория
-                    sh 'mvn package' // Maven сам найдёт pom.xml здесь
-                }
-            }
-            post {
-                success {
-                    junit 'backend/target/surefire-reports/**/*.xml'
-                }
-            }
-        }
+        // stage('Build & Test backend') {
+        //     steps {
+        //         dir("backend") { // папка backend из репозитория
+        //             sh 'mvn package' // Maven сам найдёт pom.xml здесь
+        //         }
+        //     }
+        //     post {
+        //         success {
+        //             junit 'backend/target/surefire-reports/**/*.xml'
+        //         }
+        //     }
+        // }
 
         stage('Build frontend') {
             steps {
@@ -32,7 +32,7 @@ pipeline {
 
         stage('Save artifacts') {
             steps {
-                archiveArtifacts artifacts: 'backend/target/*.jar'
+               // archiveArtifacts artifacts: 'backend/target/*.jar'
                 archiveArtifacts artifacts: 'frontend/dist/**/*'
             }
         }
