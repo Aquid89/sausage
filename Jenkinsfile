@@ -12,17 +12,17 @@ pipeline {
     }
 
     stages {
-        stage('Build & Test backend') {
-              steps {
-                dir("backend") {
-               sh 'mvn package'
-             }
-    }
-    post {
-        success {
-            junit 'target/surefire-reports/**/*.xml'
-        }
-    }
+            stage('Build & Test backend') {
+            steps {
+                // Используем абсолютный путь к pom.xml относительно workspace
+                sh 'mvn -f $WORKSPACE/backend/pom.xml package'
+            }
+            post {
+                success {
+                    // Сборка тестов
+                    junit '$WORKSPACE/backend/target/surefire-reports/**/*.xml'
+                }
+            }
         }
 
         stage('Build frontend') {
