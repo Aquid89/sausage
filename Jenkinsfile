@@ -13,17 +13,16 @@ pipeline {
 
     stages {
         stage('Build & Test backend') {
-            steps {
-                dir("backend") { // Переходим в папку backend
-                    sh 'mvn -f pom.xml package' // Собираем Maven проект, явно указывая pom.xml
-                }
-            }
-
-            post {
-                success {
-                    junit 'backend/target/surefire-reports/**/*.xml' // Результаты тестов
-                }
-            }
+              steps {
+                dir("backend") {
+               sh 'mvn package'
+             }
+    }
+    post {
+        success {
+            junit 'target/surefire-reports/**/*.xml'
+        }
+    }
         }
 
         stage('Build frontend') {
