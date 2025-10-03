@@ -9,21 +9,21 @@ pipeline {
         maven 'maven-3.8.7'  // Maven
         jdk 'jdk16'          // JDK
         nodejs 'node-15'     // NodeJS
-    }
+    }  
 
     stages {
-            stage('Build & Test backend') {
-            steps {
-                // Используем абсолютный путь к pom.xml относительно workspace
-                sh 'mvn -f $WORKSPACE/backend/pom.xml package'
-            }
-            post {
-                success {
-                    // Сборка тестов
-                    junit '$WORKSPACE/backend/target/surefire-reports/**/*.xml'
-                }
-            }
+          stage('Build & Test backend') {
+    steps {
+        sh 'mvn -f /home/sergey/.jenkins/workspace/Test11_main@script/backend/pom.xml package'
+    }
+
+    post {
+        success {
+            junit '/home/sergey/.jenkins/workspace/Test11_main@script/backend/target/surefire-reports/**/*.xml'
         }
+    }
+}
+
 
         stage('Build frontend') {
             steps {
