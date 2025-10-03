@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('H/5 * * * *') // проверка репозитория каждые ~5 минут
-    }
-
     tools {
         maven 'maven-3.8.7'
         jdk 'jdk16'
@@ -14,20 +10,20 @@ pipeline {
     stages {
         stage('Build & Test backend') {
             steps {
-                // Запуск Maven с указанием полного пути к pom.xml
-                sh 'mvn -f $WORKSPACE@script/backend/pom.xml package'
+                dir("backend") { // папка backend из репозитория
+                    sh 'mvn package' // Maven сам найдёт pom.xml здесь
+                }
             }
             post {
                 success {
-                    // Сбор результатов тестов
-                    junit '$WORKSPACE@script/backend/target/surefire-reports/**/*.xml'
+                    junit 'backend/target/surefire-reports/**/*.xml'
                 }
             }
         }
 
         stage('Build frontend') {
             steps {
-                dir("$WORKSPACE@script/frontend") {
+                dir("frontend") {
                     sh 'npm install'
                     sh 'npm run build'
                 }
@@ -36,8 +32,8 @@ pipeline {
 
         stage('Save artifacts') {
             steps {
-                archiveArtifacts artifacts: '$WORKSPACE@script/backend/target/*.jar'
-                archiveArtifacts artifacts: '$WORKSPACE@script/frontend/dist/**/*'
+                archiveArtifacts artifacts: 'backend/target/*.jar'
+                archiveArtifacts artifacts: 'frontend/dist/**/*'
             }
         }
     }
