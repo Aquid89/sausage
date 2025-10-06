@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 16
-          cache: 'npm' # ⚡️ ускоряет npm install
+          cache: 'npm' # ускоряет npm install
 
       - run: npm ci # быстрее и надёжнее, чем npm install
       - run: npm run build
@@ -39,7 +39,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-          cache: maven # ⚡️ кеширует зависимости Maven
+          cache: maven #  кеширует зависимости Maven
 
       - run: mvn -B clean package # -B = batch mode, меньше логов
 
