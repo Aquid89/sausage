@@ -1,46 +1,49 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Build Frontend & Backend
+run-name: Build triggered by ${{ github.actor }}
+
 on: [push]
+
 jobs:
-   build-frontend:
+  build-frontend:
+    name: Build Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16   
-      - name: Install NPM modules
-        run: npm install
-      - name: Build frontend
-        run: npm run build
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+          node-version: 16
+          cache: 'npm' # ⚡️ ускоряет npm install
+
+      - run: npm ci # быстрее и надёжнее, чем npm install
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: frontend-dist 
-          path: frontend/dist 
-             
-   build-backend:
+          name: frontend-dist
+          path: dist # working-directory уже frontend
+
+  build-backend:
+    name: Build Backend
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v5
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+
+      - uses: actions/setup-java@v4
         with:
-         java-version: '17'
-         distribution: 'temurin'
-         cache: maven
-      - name: Build with Maven
-        run: mvn clean package 
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
+          java-version: 17
+          distribution: temurin
+          cache: maven # ⚡️ кеширует зависимости Maven
+
+      - run: mvn -B clean package # -B = batch mode, меньше логов
+
+      - uses: actions/upload-artifact@v4
         with:
-         name: backend-jar
-         path: backend/target/*.jar
+          name: backend-jar
+          path: target/*.jar # working-directory уже backend
