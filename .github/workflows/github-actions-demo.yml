@@ -4,12 +4,11 @@ on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - name: Install NPM modules
-        run: |
-          cd ../frontend
-          npm install
+        run: npm install
       - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
+        run: npm run build
