@@ -11,7 +11,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-  workflow_dispatch:
+  workflow_dispatch: on
 
 jobs:
   build-backend:
