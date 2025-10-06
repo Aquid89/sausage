@@ -8,6 +8,8 @@ jobs:
       run:
         working-directory: frontend
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4   
       - name: Install NPM modules
         run: npm install
       - name: Build frontend
