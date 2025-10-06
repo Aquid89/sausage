@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Install NPM modules
         run: |
-          cd frontend
+          cd ../frontend
           npm install
       - name: Build frontend
         run: |
