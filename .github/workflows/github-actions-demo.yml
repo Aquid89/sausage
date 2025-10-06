@@ -29,12 +29,12 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4  
-      - name: Backend build
-        run: mvn package
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/checkout@v5
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          name: backend-dist 
-          path: backend/dist  
+         java-version: '17'
+         distribution: 'temurin'
+         cache: maven
+      - name: Build with Maven
+        run: mvn clean package 
