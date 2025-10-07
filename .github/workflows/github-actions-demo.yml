@@ -26,7 +26,7 @@ jobs:
         with:
           name: frontend-dist 
           path: frontend/dist 
-          
+
       - name: Notify Telegram (Frontend)
         if: always() # выполнится даже если сборка упала
         run: |
@@ -35,7 +35,7 @@ jobs:
            curl -s -X POST "https://api.telegram.org/bot8318827306:AAGUQ2PPCKmPCLqDNsmnMpx70o4Nu_f7eGY/sendMessage" \
             -d chat_id="109974903" \
             -d parse_mode=Markdown \
-            -d text="$MESSAGE"
+            -d text="$MESSAGE <a href=¨https://github.com/Aquid89/sausage/actions/runs/18317715082/artifacts/4205197681¨>тут</a>"
 
   build-backend:
     name: Build Backend
