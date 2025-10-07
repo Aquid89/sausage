@@ -1,7 +1,12 @@
 name: Build Frontend & Backend
 run-name: Build triggered by ${{ github.actor }}
 
-on: [push]
+# on: [push]
+on:
+  push:
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
 
 jobs:
   build-frontend:
@@ -30,6 +35,7 @@ jobs:
       - name: Notify Telegram (Frontend)
         if: always() # выполнится даже если сборка упала
         run: |
+          echo '${{ toJSON(github) }}'
           STATUS=${{ job.status }}
           MESSAGE="📦 *Frontend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ steps }}"
            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
