@@ -30,7 +30,7 @@ jobs:
       - name: Get Artifact ID
         id: get_artifact
         run: |
-          echo ${{ github }}
+          echo '${{ toJSON(github) }}'
          
       - name: Notify Telegram (Frontend)
         if: always() # выполнится даже если сборка упала
