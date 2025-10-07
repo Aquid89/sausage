@@ -1,18 +1,33 @@
 name: Build Frontend & Backend
 run-name: Build triggered by ${{ github.actor }}
 
-# on: [push]
-on:
-  push:
-    paths:
-      - 'frontend/**'
-      - 'backend/**'
+on: [push]
+# on:
+#   push:
+#     paths:
+#       - 'frontend/**'
+#       - 'backend/**'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend: 'frontend/**'
+            backend: 'backend/**'
+
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.modified, 'frontend/') || contains(github.event.head_commit.added, 'frontend/')
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     defaults:
       run:
         working-directory: frontend
@@ -47,7 +62,8 @@ jobs:
   build-backend:
     name: Build Backend
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.modified, 'backend/') || contains(github.event.head_commit.added, 'backend/')
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     defaults:
       run:
         working-directory: backend
