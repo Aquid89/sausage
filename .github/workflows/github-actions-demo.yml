@@ -27,6 +27,12 @@ jobs:
           name: frontend-dist 
           path: frontend/dist 
 
+      - name: Get Artifact ID
+        id: get_artifact
+        run: |
+          echo "ID=$(curl -s -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[0].id')" >> $GITHUB_ENV
+
       - name: Notify Telegram (Frontend)
         if: always() # выполнится даже если сборка упала
         run: |
@@ -35,7 +41,7 @@ jobs:
            curl -s -X POST "https://api.telegram.org/bot8318827306:AAGUQ2PPCKmPCLqDNsmnMpx70o4Nu_f7eGY/sendMessage" \
             -d chat_id="109974903" \
             -d parse_mode=Markdown \
-            -d text="$MESSAGE <a href=¨https://github.com/Aquid89/sausage/actions/runs/${{github.run_id}}/artifacts/¨>тут</a>"
+            -d text="$MESSAGE <a href=¨https://github.com/Aquid89/sausage/actions/runs/${{github.run_id}}/artifacts/${{ env.ID }}¨>тут</a>"
 
   build-backend:
     name: Build Backend
