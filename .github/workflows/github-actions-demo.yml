@@ -12,6 +12,7 @@ jobs:
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'frontend/') || contains(github.event.head_commit.added, 'frontend/')
     defaults:
       run:
         working-directory: frontend
@@ -46,6 +47,7 @@ jobs:
   build-backend:
     name: Build Backend
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'backend/') || contains(github.event.head_commit.added, 'backend/')
     defaults:
       run:
         working-directory: backend
