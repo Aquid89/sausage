@@ -31,11 +31,11 @@ jobs:
         if: always() # выполнится даже если сборка упала
         run: |
           STATUS=${{ job.status }}
-          MESSAGE="📦 *Frontend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ github.actor }} ++ ${{ steps.upload_artifact.outputs.artifact-url }}"
+          MESSAGE="📦 *Frontend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ github.actor }}\nBy: ${{ steps.upload_artifact.outputs.artifact-url }}"
            curl -s -X POST "https://api.telegram.org/bot8318827306:AAGUQ2PPCKmPCLqDNsmnMpx70o4Nu_f7eGY/sendMessage" \
             -d chat_id="109974903" \
             -d parse_mode=Markdown \
-            -d text="$MESSAGE <a href="https://github.com/Aquid89/sausage/actions/runs/${{ github.run_id }} /artifacts/4205197681">тут</a>"
+            -d text="$MESSAGE"
 
   build-backend:
     name: Build Backend
