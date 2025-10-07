@@ -32,7 +32,7 @@ jobs:
         run: |
           STATUS=${{ job.status }}
           MESSAGE="📦 *Frontend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ steps }}"
-           curl -s -X POST "https://api.telegram.org/bot{{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
             -d chat_id="109974903" \
             -d parse_mode=Markdown \
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
