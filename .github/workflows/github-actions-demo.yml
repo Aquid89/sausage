@@ -93,41 +93,47 @@ jobs:
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -d parse_mode=Markdown \
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
-  
-  codeql-analysis:
-    name: CodeQL Security Scan 
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    # Запускаем независимо от фронта и бэка 
-    needs: [changes]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript, java # если у тебя JS и Java
      
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 16
-          cache: 'npm' # ускоряет npm install 
-          cache-dependency-path: frontend/package-lock.json
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # ✅ автоматический токен
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # 🔑 твой токен из SonarCloud
+  
+  # codeql-analysis:
+  #   name: CodeQL Security Scan 
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     security-events: write
+  #     actions: read
+  #     contents: read
+  #   # Запускаем независимо от фронта и бэка 
+  #   needs: [changes]
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v5
 
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm ci
-          npm run build
+  #     - name: Initialize CodeQL
+  #       uses: github/codeql-action/init@v3
+  #       with:
+  #         languages: javascript, java # если у тебя JS и Java
+     
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 16
+  #         cache: 'npm' # ускоряет npm install 
+  #         cache-dependency-path: frontend/package-lock.json
 
-      - name: Build backend
-        run: |
-          cd backend
-          mvn -B compile
+  #     - name: Build frontend
+  #       run: |
+  #         cd frontend
+  #         npm ci
+  #         npm run build
+
+  #     - name: Build backend
+  #       run: |
+  #         cd backend
+  #         mvn -B compile
 
       
       - name: Perform CodeQL Analysis
