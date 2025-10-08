@@ -93,27 +93,64 @@ jobs:
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -d parse_mode=Markdown \
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
-
-  codeql-analysis:
-    name: CodeQL Security Scan
+  
+  codeql-security-scan:
+    name: CodeQL Security Analysis
     runs-on: ubuntu-latest
     permissions:
       security-events: write
       actions: read
       contents: read
-    # Запускаем независимо от фронта и бэка
-    needs: [changes]
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+    - name: Checkout repository
+      uses: actions/checkout@v5
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript, java # если у тебя JS и Java
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript, java
+        queries: security-extended
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+    - name: Build JavaScript code
+      run: |
+        cd frontend
+        npm ci
+        npm run build
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+    - name: Build Java code
+      run: |
+        cd backend  
+        mvn -B compile
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+    - name: Security Scan Summary
+      if: always()
+      run: |
+        echo "🔒 CodeQL security scan completed with status: ${{ job.status }}"
+        echo "📊 Results available in GitHub Security tab"
+  # codeql-analysis:
+  #   name: CodeQL Security Scan
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     security-events: write
+  #     actions: read
+  #     contents: read
+  #   # Запускаем независимо от фронта и бэка
+  #   needs: [changes]
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v5
+
+  #     - name: Initialize CodeQL
+  #       uses: github/codeql-action/init@v3
+  #       with:
+  #         languages: javascript, java # если у тебя JS и Java
+
+  #     - name: Autobuild
+  #       uses: github/codeql-action/autobuild@v3
+
+  #     - name: Perform CodeQL Analysis
+  #       uses: github/codeql-action/analyze@v3
