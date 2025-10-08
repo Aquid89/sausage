@@ -94,63 +94,26 @@ jobs:
             -d parse_mode=Markdown \
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
   
-  codeql-security-scan:
-    name: CodeQL Security Analysis
+  codeql-analysis:
+    name: CodeQL Security Scan 
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - language: javascript
-            build-dir: frontend
-          - language: java
-            build-dir: backend
-    
-    needs: [build-frontend, build-backend]
     permissions:
       security-events: write
       actions: read
       contents: read
-    
+    # Запускаем независимо от фронта и бэка
+    needs: [changes]
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: ./
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, java # если у тебя JS и Java
 
-    - name: Initialize CodeQL for ${{ matrix.language }}
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
-        build-mode: none # Отключаем автоматическую сборку
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
-    - name: Perform CodeQL Analysis for ${{ matrix.language }}
-      uses: github/codeql-action/analyze@v2
-      with:
-        category: "/language:${{ matrix.language }}"
-  # codeql-analysis:
-  #   name: CodeQL Security Scan 
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     security-events: write
-  #     actions: read
-  #     contents: read
-  #   # Запускаем независимо от фронта и бэка
-  #   needs: [changes]
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v5
-
-  #     - name: Initialize CodeQL
-  #       uses: github/codeql-action/init@v3
-  #       with:
-  #         languages: javascript, java # если у тебя JS и Java
-
-  #     - name: Autobuild
-  #       uses: github/codeql-action/autobuild@v3
-
-  #     - name: Perform CodeQL Analysis
-  #       uses: github/codeql-action/analyze@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
