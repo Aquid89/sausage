@@ -6,7 +6,7 @@ on: [pull_request]
 #   push:
 #     paths:
 #       - 'frontend/**'
-#       - 'backend/**'
+#       - 'backend/**' 
 
 jobs:
   changes:
