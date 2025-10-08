@@ -97,35 +97,31 @@ jobs:
   sonarcloud:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    needs: [build-frontend, build-backend]
+    needs: build-backend  # ждёт пока соберётся backend
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-      - name: Set up Node (for frontend analysis)
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install frontend deps
-        working-directory: frontend
-        run: npm ci
-
-      - name: Set up Java (for backend analysis)
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: temurin
-          cache: maven
 
-      - name: SonarCloud Scan
+      - name: Build backend for Sonar
+        run: |
+          cd backend
+          mvn -B clean package -DskipTests
+
+      - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=Aquid89_sausage
+            -Dsonar.organization=aquid89
+            -Dsonar.java.binaries=backend/target/classes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # ✅ автоматический токен
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # 🔑 твой токен из SonarCloud 
-  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   # codeql-analysis:
   #   name: CodeQL Security Scan 
   #   runs-on: ubuntu-latest
