@@ -101,30 +101,33 @@ jobs:
       security-events: write
       actions: read
       contents: read
+    needs: [build-frontend, build-backend] # 👈 теперь ждём, пока соберутся фронт и бэк
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v5
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: javascript, java
         queries: security-extended
 
-    - name: Build JavaScript code
-      run: |
-        cd frontend
-        npm ci
-        npm run build
+    - name: Download Frontend build
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-dist
+        path: frontend/dist
 
-    - name: Build Java code
-      run: |
-        cd backend  
-        mvn -B compile
+    - name: Download Backend JAR
+      uses: actions/download-artifact@v4
+      with:
+        name: backend-jar
+        path: backend/target
 
+    # 👇 здесь уже не компилируем — у нас есть собранный код
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
 
     - name: Security Scan Summary
       if: always()
