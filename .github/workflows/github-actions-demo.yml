@@ -101,7 +101,7 @@ jobs:
       security-events: write
       actions: read
       contents: read
-    # Запускаем независимо от фронта и бэка
+    # Запускаем независимо от фронта и бэка 
     needs: [changes]
     steps:
       - name: Checkout repository
