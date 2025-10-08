@@ -112,8 +112,17 @@ jobs:
         with:
           languages: javascript, java # если у тебя JS и Java
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
 
+      - name: Build backend
+        run: |
+          cd backend
+          mvn -B compile
+
+      
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
