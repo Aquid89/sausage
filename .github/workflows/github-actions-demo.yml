@@ -101,39 +101,32 @@ jobs:
       security-events: write
       actions: read
       contents: read
-    needs: [build-frontend, build-backend] # 👈 теперь ждём, пока соберутся фронт и бэк
-    
+    needs: [build-frontend, build-backend]
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: javascript, java
-        queries: security-extended
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, java
+          queries: security-extended
+          build-mode: manual
 
-    - name: Download Frontend build
-      uses: actions/download-artifact@v4
-      with:
-        name: frontend-dist
-        path: frontend/dist
+      - name: Build Java manually
+        run: |
+          cd backend
+          mvn -B clean compile
 
-    - name: Download Backend JAR
-      uses: actions/download-artifact@v4
-      with:
-        name: backend-jar
-        path: backend/target
+      - name: Download Frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
 
-    # 👇 здесь уже не компилируем — у нас есть собранный код
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-
-    - name: Security Scan Summary
-      if: always()
-      run: |
-        echo "🔒 CodeQL security scan completed with status: ${{ job.status }}"
-        echo "📊 Results available in GitHub Security tab"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
   # codeql-analysis:
   #   name: CodeQL Security Scan 
   #   runs-on: ubuntu-latest
