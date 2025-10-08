@@ -132,7 +132,7 @@ jobs:
         echo "🔒 CodeQL security scan completed with status: ${{ job.status }}"
         echo "📊 Results available in GitHub Security tab"
   # codeql-analysis:
-  #   name: CodeQL Security Scan
+  #   name: CodeQL Security Scan 
   #   runs-on: ubuntu-latest
   #   permissions:
   #     security-events: write
