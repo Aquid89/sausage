@@ -26,8 +26,7 @@ jobs:
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest
-    needs: changes
-    # if: needs.changes.outputs.frontend == 'true'
+    # needs: changes
     defaults:
       run:
         working-directory: frontend
@@ -84,8 +83,7 @@ jobs:
   build-backend:
     name: Build Backend
     runs-on: ubuntu-latest
-    needs: changes
-    # if: needs.changes.outputs.backend == 'true'
+    # needs: changes
     defaults:
       run:
         working-directory: backend
