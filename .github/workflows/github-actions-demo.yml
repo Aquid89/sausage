@@ -125,8 +125,12 @@ jobs:
          distribution: temurin
          cache: maven
         
-      - name: Compile classes for SonarQube
-        run: mvn -B compile -DskipTests
+      # - name: Compile classes for SonarQube
+      #   run: mvn -B compile -DskipTests
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend-build 
+          path: backend/target
 
       - name: SonarQube Scan (Backend)
         uses: SonarSource/sonarqube-scan-action@v6
