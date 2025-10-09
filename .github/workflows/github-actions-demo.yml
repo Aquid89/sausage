@@ -98,21 +98,6 @@ jobs:
         with:
          name: backend-jar
          path: backend/target/*.jar
-
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-         args: >
-          -Dsonar.projectBaseDir=backend
-          -Dsonar.sources=target
-          -Dsonar.projectKey=Aquid89_sausage
-          -Dsonar.organization=aquid89
-          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
-          -Dsonar.pullrequest.branch=${{ github.head_ref }}
-          -Dsonar.pullrequest.base=${{ github.base_ref }}
       
       - name: Notify Telegram (Backend)
         if: always() # выполнится даже если сборка упала
