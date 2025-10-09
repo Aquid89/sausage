@@ -61,7 +61,9 @@ jobs:
           -Dsonar.projectKey=Aquid89_sausage
           -Dsonar.organization=aquid89
           -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
-     
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+          -Dsonar.pullrequest.branch=${{ github.head_ref }}
+          -Dsonar.pullrequest.base=${{ github.base_ref }}
 
          
       - name: Notify Telegram (Frontend)
