@@ -4,7 +4,7 @@ run-name: Build triggered by ${{ github.actor }}
 on: [pull_request]
 # on:
 #   push: 
-#     paths:
+#     paths: 
 #       - 'frontend/**'
 #       - 'backend/**' 
 
