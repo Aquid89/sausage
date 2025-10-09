@@ -46,26 +46,9 @@ jobs:
         with:
           name: frontend-dist 
           path: frontend/dist 
-      
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-         args: >
-          -Dsonar.projectBaseDir=frontend
-          -Dsonar.sources=src
-          -Dsonar.projectKey=Aquid89_sausage
-          -Dsonar.organization=aquid89
-          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts
-          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
-          -Dsonar.pullrequest.branch=${{ github.head_ref }}
-          -Dsonar.pullrequest.base=${{ github.base_ref }}
-
-         
+          
       - name: Notify Telegram (Frontend)
-        if: always() # выполнится даже если сборка упала
+        if: always()
         run: |
           echo '${{ toJSON(github) }}'
           STATUS=${{ job.status }}
@@ -74,6 +57,23 @@ jobs:
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -d parse_mode=Markdown \
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
+  
+  sonar-frontend:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: SonarQube Scan (Frontend)
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectBaseDir=frontend
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.head_ref }}
+            -Dsonar.pullrequest.base=${{ github.base_ref }}
 
   build-backend:
     name: Build Backend
@@ -100,7 +100,7 @@ jobs:
          path: backend/target/*.jar
       
       - name: Notify Telegram (Backend)
-        if: always() # выполнится даже если сборка упала
+        if: always()
         run: |
           STATUS=${{ job.status }}
           MESSAGE="📦 *Backend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ steps }}"
@@ -109,69 +109,3 @@ jobs:
             -d parse_mode=Markdown \
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
      
-  # sonarcloud:
-  #   name: SonarCloud Scan
-  #   runs-on: ubuntu-latest
-  #   needs: build-backend  # ждёт пока соберётся backend
-  #   steps:
-  #     - uses: actions/checkout@v5
-
-  #     - name: Set up Java
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         java-version: 17
-  #         distribution: temurin
-
-  #     - name: Build backend for Sonar
-  #       run: |
-  #         cd backend
-  #         mvn -B clean package -DskipTests
-
-  #     - name: Run SonarCloud Scan
-  #       uses: SonarSource/sonarcloud-github-action@v2
-  #       with:
-  #         args: >
-  #           -Dsonar.projectKey=Aquid89_sausage
-  #           -Dsonar.organization=aquid89
-  #           -Dsonar.java.binaries=backend/target/classes
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  # codeql-analysis:
-  #   name: CodeQL Security Scan 
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     security-events: write
-  #     actions: read
-  #     contents: read
-  #   # Запускаем независимо от фронта и бэка 
-  #   needs: [changes]
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v5
-
-  #     - name: Initialize CodeQL
-  #       uses: github/codeql-action/init@v3
-  #       with:
-  #         languages: javascript, java # если у тебя JS и Java
-     
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 16
-  #         cache: 'npm' # ускоряет npm install 
-  #         cache-dependency-path: frontend/package-lock.json
-
-  #     - name: Build frontend
-  #       run: |
-  #         cd frontend
-  #         npm ci
-  #         npm run build
-
-  #     - name: Build backend
-  #       run: |
-  #         cd backend
-  #         mvn -B compile
-
-      
-      # - name: Perform CodeQL Analysis
-      #   uses: github/codeql-action/analyze@v3
