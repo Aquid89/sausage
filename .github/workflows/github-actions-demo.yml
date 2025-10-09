@@ -97,7 +97,7 @@ jobs:
         id: upload
         with:
          name: backend-jar
-         path: backend/target/*.jar
+         path: backend/target
       
       - name: Notify Telegram (Backend)
         if: always()
