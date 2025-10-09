@@ -129,7 +129,7 @@ jobs:
       #   run: mvn -B compile -DskipTests
       - uses: actions/download-artifact@v4
         with:
-          name: backend-build 
+          name: backend-jar
           path: backend/target
 
       - name: SonarQube Scan (Backend)
