@@ -10,7 +10,7 @@ run-name: Build triggered by ${{ github.actor }}
 
 on:
   pull_request:
-    types: [closed]
+    # types: [closed]
     branches: [master]
 jobs:
   # changes:
@@ -134,7 +134,7 @@ jobs:
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
      
   sonar-backend:
-    needs: build-backend
+    needs: [changes-detector, build-backend]
     name: SonarQube Backend
     runs-on: ubuntu-latest
     defaults:
