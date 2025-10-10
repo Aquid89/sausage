@@ -10,7 +10,7 @@ run-name: Build triggered by ${{ github.actor }}
 
 on:
   pull_request:
-    types: [closed]
+    # types: [closed]
     branches: [master]
 jobs:
   # changes:
@@ -27,7 +27,6 @@ jobs:
   #           frontend: 'frontend/**'
   #           backend: 'backend/**'
   changes-detector:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
      frontend: ${{ steps.changes.outputs.frontend == 'true' && 'true' || 'false' }}
@@ -37,6 +36,8 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: changes
         with:
+          base: ${{ github.event.before }}
+          head: ${{ github.sha }}
           filters: |
             frontend:
               - 'frontend/**'
@@ -134,7 +135,7 @@ jobs:
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
      
   sonar-backend:
-    needs: build-backend
+    needs: [changes-detector, build-backend]
     name: SonarQube Backend
     runs-on: ubuntu-latest
     defaults:
