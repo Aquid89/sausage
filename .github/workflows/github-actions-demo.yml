@@ -27,7 +27,6 @@ jobs:
   #           frontend: 'frontend/**'
   #           backend: 'backend/**'
   changes-detector:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
      frontend: ${{ steps.changes.outputs.frontend == 'true' && 'true' || 'false' }}
@@ -37,6 +36,8 @@ jobs:
       - uses: dorny/paths-filter@v2
         id: changes
         with:
+          base: ${{ github.event.before }}
+          head: ${{ github.sha }}
           filters: |
             frontend:
               - 'frontend/**'
