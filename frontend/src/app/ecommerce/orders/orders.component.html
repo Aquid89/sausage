@@ -1,7 +1,7 @@
 <h2 class="text-center">Оформление заказа</h2>
 <ul>
     <li *ngFor="let order of orders.productOrders">
-        {{ order.product.name }} - {{ order.product.price }}₽ x {{ order.quantity}} шт.
+        {{ order.product.name }} - {{ order.product.price }}₽ x {{ order.quantity}} шт. 
     </li>
 </ul>
 <h3 class="text-right">Общая стоимость: {{ total }}₽</h3>
