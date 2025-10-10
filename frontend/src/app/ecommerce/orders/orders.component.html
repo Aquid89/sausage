@@ -3,7 +3,7 @@
     <li *ngFor="let order of orders.productOrders">
         {{ order.product.name }} - {{ order.product.price }}₽ x {{ order.quantity}} шт. 
     </li>
-</ul> 
+</ul>  
 <h3 class="text-right">Общая стоимость: {{ total }}₽</h3>
 
 <button class="btn btn-primary btn-block" (click)="pay()" *ngIf="!paid">Оплатить</button>
