@@ -83,7 +83,8 @@ jobs:
             -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
   
   sonar-frontend:
-    needs: build-frontend
+    needs: [changes-detector, build-frontend]
+    if: needs.changes-detector.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
