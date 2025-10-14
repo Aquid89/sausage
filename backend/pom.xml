@@ -52,7 +52,7 @@
             <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+    </dependencies> 
 
     <build>
         <plugins>
@@ -61,7 +61,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>
+    </build> 
 
     <distributionManagement>
     <repository>
