@@ -134,15 +134,41 @@ jobs:
          name: backend-jar
          path: backend/target
       
+      # Создаём settings.xml с логином
+      - name: Create Maven settings.xml
+        run: |
+         cat <<EOF > settings.xml
+         <settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+           <servers>
+             <server>
+               <id>sausage-store</id>
+                <username>${{ secrets.NEXUS_USER }}</username>
+               <password>${{ secrets.NEXUS_PASS }}</password>
+             </server>
+           </servers>
+         </settings>
+          EOF
+
+      # Сборка и деплой
+      - name: Build and Deploy Backend
+        run: |
+         mvn deploy -B -DskipTests \
+            -s settings.xml \
+            -Dnexus.repo.url=https://f6cdfaa94e6c.ngrok-free.app/repository/backend/ \
+           -Dmaven.repo.local=${{ github.workspace }}/.m2/repository \
+           -Dversion.application=${{ github.run_number }}
+
       - name: Notify Telegram (Backend)
         if: always()
         run: |
-          STATUS=${{ job.status }}
-          MESSAGE="📦 *Backend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ steps }}"
-           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d parse_mode=Markdown \
-            -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
+            STATUS=${{ job.status }}
+            MESSAGE="📦 *Backend build* finished with status: *${STATUS}*\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nBy: ${{ steps }}"
+             curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+             -d parse_mode=Markdown \
+              -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
      
   sonar-backend:
     needs: [changes-detector, build-backend]
