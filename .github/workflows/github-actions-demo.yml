@@ -137,19 +137,20 @@ jobs:
       # Создаём settings.xml с логином
       - name: Create Maven settings.xml
         run: |
-         cat <<EOF > settings.xml
-         <settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
-           <servers>
-             <server>
-               <id>sausage-store</id>
+          cat <<EOF > settings.xml
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+            <servers>
+              <server>
+            <id>sausage-store</id>
                 <username>${{ secrets.NEXUS_USER }}</username>
-               <password>${{ secrets.NEXUS_PASS }}</password>
-             </server>
-           </servers>
-         </settings>
+                <password>${{ secrets.NEXUS_PASS }}</password>
+              </server>
+            </servers>
+          </settings>
           EOF
+
 
       # Сборка и деплой
       - name: Build and Deploy Backend
