@@ -67,7 +67,18 @@ jobs:
         with:
           name: frontend-dist 
           path: frontend/dist 
-          
+
+      - name: Archive Frontend
+        run: zip -r frontend-dist.zip dist
+
+      - name: Upload to Nexus
+        env:
+         NEXUS_USER: ${{ secrets.NEXUS_USER }}
+         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+        run: |
+         curl -u $NEXUS_USER:$NEXUS_PASSWORD \
+          --upload-file frontend-dist.zip \
+         https://f6cdfaa94e6c.ngrok-free.app/repository/frontend/${{ github.sha }}/frontend-dist.zip      
       - name: Notify Telegram (Frontend)
         if: always()
         run: |
