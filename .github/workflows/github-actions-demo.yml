@@ -157,9 +157,8 @@ jobs:
         run: |
          mvn deploy -B -DskipTests \
             -s settings.xml \
-            -Dnexus.repo.url=https://f6cdfaa94e6c.ngrok-free.app/repository/backend/ \
+            -Dnexus.repo.url=https://f6cdfaa94e6c.ngrok-free.app/repository/backend-snapshots/ \
            -Dmaven.repo.local=${{ github.workspace }}/.m2/repository \
-           -Dversion.application=${{ github.run_number }}
 
       - name: Notify Telegram (Backend)
         if: always()
