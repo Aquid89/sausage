@@ -145,7 +145,7 @@ jobs:
               <server>
             <id>sausage-store</id>
                 <username>${{ secrets.NEXUS_USER }}</username>
-                <password>${{ secrets.NEXUS_PASS }}</password>
+                <password>${{ secrets.NEXUS_PASSWORD }}</password>
               </server>
             </servers>
           </settings>
