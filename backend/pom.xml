@@ -63,4 +63,12 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+    <repository>
+         <id>sausage-store</id>
+         <name>sausage-store</name>
+         <url>${nexus.repo.url}</url>
+     </repository>
+  </distributionManagement>
+
 </project>
