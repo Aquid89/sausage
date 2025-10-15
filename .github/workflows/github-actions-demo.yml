@@ -78,7 +78,7 @@ jobs:
         run: |
          curl -u $NEXUS_USER:$NEXUS_PASSWORD \
           --upload-file frontend-dist.zip \
-         https://d0e7753060cd.ngrok-free.app/repository/frontend/${{ github.sha }}/frontend-dist.zip      
+          https://a2bd0a515c00.ngrok-free.app/repository/frontend/${{ github.sha }}/frontend-dist.zip      
       - name: Notify Telegram (Frontend)
         if: always()
         run: |
@@ -157,7 +157,7 @@ jobs:
         run: |
          mvn deploy -B -DskipTests \
             -s settings.xml \
-            -Dnexus.repo.url=https://d0e7753060cd.ngrok-free.app/repository/backend-snapshots/ \
+            -Dnexus.repo.url= https://a2bd0a515c00.ngrok-free.app/repository/backend-snapshots/ \
            -Dmaven.repo.local=${{ github.workspace }}/.m2/repository \
 
       - name: Notify Telegram (Backend)
