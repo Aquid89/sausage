@@ -106,12 +106,12 @@ jobs:
       run: |
        ssh ${{ secrets.SSH_USER }}@51.250.90.178 "
        cd /var/www/myapp || (sudo mkdir -p /var/www/myapp && cd /var/www/myapp && sudo chown \$USER:\$USER .);
+       rm -rf *;
        wget --user='${{ secrets.NEXUS_USER }}' --password='${{ secrets.NEXUS_PASSWORD }}' \
        'https://a2bd0a515c00.ngrok-free.app/repository/frontend/2677a9fb1f076c693e41de664d20edb1c837bb48/frontend-dist.zip' \
        -O build.zip;
-       rm -rf *;
        unzip build.zip;
-        sudo systemctl reload nginx"
+         sudo systemctl reload nginx"
 
   
   sonar-frontend:
