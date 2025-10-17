@@ -185,7 +185,7 @@ jobs:
         run: |
          mvn deploy -B -DskipTests \
             -s settings.xml \
-            -Dnexus.repo.url= $NEXUS_URL/repository/backend-snapshots/ \
+            -Dnexus.repo.url=$NEXUS_URL/repository/backend-snapshots/ \
            -Dmaven.repo.local=${{ github.workspace }}/.m2/repository \
 
       - name: Notify Telegram (Backend)
