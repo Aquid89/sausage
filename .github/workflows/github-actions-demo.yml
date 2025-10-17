@@ -112,7 +112,7 @@ jobs:
        cd /var/www/myapp || (sudo mkdir -p /var/www/myapp && cd /var/www/myapp && sudo chown \$USER:\$USER .);
        rm -rf *;
        wget --user='${{ secrets.NEXUS_USER }}' --password='${{ secrets.NEXUS_PASSWORD }}' \
-       '$NEXUS_URL/repository/frontend/2677a9fb1f076c693e41de664d20edb1c837bb48/frontend-dist.zip' \
+       '$NEXUS_URL/repository/frontend/${{ github.sha }}/frontend-dist.zip' \
        -O build.zip;
        unzip build.zip;
          sudo systemctl reload nginx"
