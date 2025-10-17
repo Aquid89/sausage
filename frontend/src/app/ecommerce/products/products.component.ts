@@ -63,7 +63,7 @@ export class ProductsComponent implements OnInit {
                     })
                 },
                 (error) => {
-                    window.alert('На сайте ведутся технические работы. Приходите позже!');
+                    window.alert('На сайте ведутся технические работы!. Приходите позже!');
                     console.log(error);
                 }
             );
