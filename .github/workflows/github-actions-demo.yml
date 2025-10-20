@@ -14,8 +14,8 @@ on:
     branches: [master]
 
 env:
-  NEXUS_URL: https://a8687adc3e7c.ngrok-free.app
-  DEPLOY_SERVER: 51.250.79.128
+  NEXUS_URL: https://a156ed218fad.ngrok-free.app
+  DEPLOY_SERVER: 158.160.44.33
 jobs:
   # changes:
   #   runs-on: ubuntu-latest
