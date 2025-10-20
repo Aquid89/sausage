@@ -14,8 +14,8 @@ on:
     branches: [master]
 
 env:
-  NEXUS_URL: https://a8687adc3e7c.ngrok-free.app
-  DEPLOY_SERVER: 51.250.79.128
+  NEXUS_URL: https://a156ed218fad.ngrok-free.app
+  DEPLOY_SERVER: 158.160.44.33
 jobs:
   # changes:
   #   runs-on: ubuntu-latest
@@ -197,6 +197,32 @@ jobs:
               -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
              -d parse_mode=Markdown \
               -d text="$MESSAGE ${{ steps.upload.outputs.artifact-url }}"
+
+  deploy-backend:
+   runs-on: ubuntu-latest
+   needs: [changes-detector, build-backend]
+
+   steps:
+    - name: Download artifact from Nexus
+      run: |
+          curl -u "${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }}" \
+            -o app.jar \
+            "http://$NEXUS_URLrepository/backend-snapshots/com/yandex/practicum/devops/sausage-store/0.0.1-SNAPSHOT/sausage-store-0.0.1-20251014.162308-1.jar"
+          ls -lh app.jar
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
+
+    - name: Copy JAR to server
+      run: |
+          scp app.jar ${{ secrets.SSH_USER }}@$DEPLOY_SERVER:/var/www/myapp/app.jar
+
+    - name: Restart systemd service
+      run: |
+          ssh ${{ secrets.SSH_USER}}@$DEPLOY_SERVER "sudo systemctl restart myapp && sudo systemctl status myapp --no-pager"
      
   sonar-backend:
     needs: [changes-detector, build-backend]
