@@ -207,7 +207,7 @@ jobs:
       run: |
           curl -u "${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }}" \
             -o app.jar \
-            "http://$NEXUS_URLrepository/backend-snapshots/com/yandex/practicum/devops/sausage-store/0.0.1-SNAPSHOT/sausage-store-0.0.1-20251014.162308-1.jar"
+            "http://$NEXUS_URL/repository/backend-snapshots/com/yandex/practicum/devops/sausage-store/0.0.1-SNAPSHOT/sausage-store-0.0.1-20251014.162308-1.jar"
           ls -lh app.jar
     - name: Setup SSH
       run: |
@@ -218,7 +218,14 @@ jobs:
 
     - name: Copy JAR to server
       run: |
-          scp app.jar ${{ secrets.SSH_USER }}@$DEPLOY_SERVER:/var/www/myapp/app.jar
+          set -e  # при любой ошибке шаг завершится с ошибкой
+           echo "📦 Проверяю наличие JAR файла..."
+          if [ ! -f app.jar ]; then
+          echo "Файл app.jar не найден. Останавливаю пайплайн."
+          exit 1
+          fi
+
+          scp -v app.jar ${{ secrets.SSH_USER }}@$DEPLOY_SERVER:/var/www/myapp/app.jar
 
     - name: Restart systemd service
       run: |
