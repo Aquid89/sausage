@@ -205,9 +205,9 @@ jobs:
    steps:
     - name: Download artifact from Nexus
       run: |
-          curl -u "${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }}" \
+          curl -u $NEXUS_USER:$NEXUS_PASSWORD \
             -o app.jar \
-            "http://$NEXUS_URL/repository/backend-snapshots/com/yandex/practicum/devops/sausage-store/0.0.1-SNAPSHOT/sausage-store-0.0.1-20251014.162308-1.jar"
+            "https://a156ed218fad.ngrok-free.app/repository/backend-snapshots/com/yandex/practicum/devops/sausage-store/0.0.1-SNAPSHOT/sausage-store-0.0.1-20251014.162308-1.jar"
           ls -lh app.jar
     - name: Setup SSH
       run: |
