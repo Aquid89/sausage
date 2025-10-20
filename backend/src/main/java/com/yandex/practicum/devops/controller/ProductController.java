@@ -1,5 +1,5 @@
 package com.yandex.practicum.devops.controller;
-
+ 
 import com.yandex.practicum.devops.model.Product;
 import com.yandex.practicum.devops.service.ProductService;
 import org.springframework.web.bind.annotation.GetMapping;
