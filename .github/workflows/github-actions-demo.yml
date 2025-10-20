@@ -203,6 +203,20 @@ jobs:
    needs: [changes-detector, build-backend]
 
    steps:
+    - name: Get latest version from Nexus
+      id: get-version
+      run: |
+        # Скачиваем maven-metadata.xml
+        curl -s -u $NEXUS_USER:$NEXUS_PASSWORD \
+          -o maven-metadata.xml \
+          "$NEXUS_URL/repository/backend-snapshots/com/yandex/practicum/devops/sausage-store/0.01-SNAPSHOT/maven-metadata.xml"
+        
+        # Извлекаем самую свежую версию
+        LATEST_VERSION=$(grep -oP '<version>0\.01-\d{4}I\d+Z\d+-\d+</version>' maven-metadata.xml | tail -1 | sed 's/<version>//' | sed 's/<\/version>//')
+        
+        # Сохраняем в output
+        echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_OUTPUT
+        echo "📦 Latest version: $LATEST_VERSION"
     - name: Download artifact from Nexus
       run: |
           curl -u $NEXUS_USER:$NEXUS_PASSWORD \
